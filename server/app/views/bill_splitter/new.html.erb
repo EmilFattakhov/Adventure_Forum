@@ -1,0 +1,23 @@
+<h1>BillSplitter#new</h1>
+<p>Find me in app/views/bill_splitter/new.html.erb</p>
+<div class='shadow-sm p-3 mb-5 bg-white rounded'>
+  <%= form_with(url: '/calculate_split', local: true) do |f| %>
+    <div class='form-group'>
+      <%= f.label :amount %>
+      <%= f.number_field :amount, class: 'form-control', min: 0, step: :any %>
+    </div>
+    <div class='form-group'>
+      <%= f.label :tax %>
+      <%= f.number_field :tax, class: 'form-control' %>
+    </div>
+     <div class='form-group'>
+      <%= f.label :tip %>
+      <%= f.number_field :tip, class: 'form-control' %>
+    </div>
+      <div class='form-group'>
+      <%= f.label :num_of_people %>
+      <%= f.number_field :num_of_people, class: 'form-control' %>
+    </div>
+    <%= f.submit class: 'btn btn-primary' %> 
+  <% end %>
+</div>

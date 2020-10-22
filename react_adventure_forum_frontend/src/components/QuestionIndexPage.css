@@ -1,0 +1,47 @@
+.question-index li{
+    list-style-type: circle;
+}
+
+.question-index ul{
+    margin-top: 2vh;
+}
+
+#question-index-page{
+    display: flex;
+    justify-content: center;
+}
+
+.question-index ul p {
+    color: white;
+    font-size: 3vh;
+}
+
+.question-index ul h4 {
+    color: white;
+}
+
+body{
+    background-image: url(https://images.unsplash.com/photo-1477346611705-65d1883cee1e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80);
+}
+
+.home-page{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.home-page h4{
+    color: white;
+    font-size: 4vh;
+}
+
+.home-page p{
+    color: white;
+    font-size: 3vh;
+}
+
+.home-page h3{
+    color: white;
+    font-size: 3vh;
+}

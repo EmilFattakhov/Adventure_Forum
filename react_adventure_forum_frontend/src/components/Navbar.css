@@ -1,0 +1,22 @@
+.split-container{
+    display: grid;
+    grid-template-columns: 60% 40%;
+    background-color: #342E37;
+}
+
+.navbar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-content: center;
+}
+
+.navbar p{
+    font-size: 2vh;
+    color: white;
+}
+
+.navbar span {
+    font-size: 30px;
+}
+

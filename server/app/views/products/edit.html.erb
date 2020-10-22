@@ -1,0 +1,14 @@
+<div class='shadow-sm p-3 mb-5 bg-white rounded'>
+  <h1 class='m-0'>
+    <small class='text-muted'>
+      Editing: 
+    </small>
+    <span class='badge badge-pill badge-info'>
+      <%= @product.id %>
+    </span>
+    <%= @product.title %>
+  </h1>
+</div>
+<div class='shadow p-3 mb-5 bg-white rounded'>
+  <%= render 'form' %>
+</div>

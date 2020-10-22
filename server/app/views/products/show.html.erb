@@ -1,0 +1,124 @@
+<div class='shadow-sm p-3 mb-5 bg-white rounded overflow-wrap'>
+  <div class='clearfix'>
+    <h1 class='float-left'>
+      <span class='badge badge-pill badge-info'>
+        <%= @product.id %>
+      </span>
+      <%= @product.title %>
+    </h1>
+    <h1 class='float-right text-center'>
+      <% if @product.sale_price.present? && @product.sale_price < @product.price %>
+        <span class='badge badge-pill badge-success'><s><%= number_to_currency @product.price %></s></span>
+        <span class='badge badge-pill badge-danger'><%= number_to_currency @product.sale_price %></span>
+      <% else %>
+        <span class='badge badge-pill badge-success'><%= number_to_currency @product.price %></span>
+      <% end %>
+    </h1>
+    
+  </div>
+  <small class='text-muted'>
+    sold by <em><%= @product.user.full_name %></em>
+  <small>
+  <hr/>
+  <p class='shadow-none p-3 rounded'><%= @product.description %></p>
+  <p>Tags:</p>
+  <% unless @product.tags.empty? %>
+    <div>
+      <% @product.tags.each do |tag| %>
+        <%= link_to(
+            tag.name,
+            products_path(tag: tag.name), class: "badge badge-pill badge-primary"
+        ) %>
+      <% end %>
+    </div>
+  <% end %>
+  <div>
+    <%# link_to() just creates a anchor tag with the appropriate href. The 3rd argument is a optional options hash which can have a :method key; If a :method key is provided Rails will set a data-method attribute to the a tag and adds some additional javascript to the page which makes the anchor tag use the specified http method instead of the default GET. (Basically Rails Magic) %>
+    <%# https://api.rubyonrails.org/classes/ActionView/Helpers/UrlHelper.html#method-i-link_to %>
+    <%# passing a value (number/string) to a helper method like `product_path` will return a path with the value appended to the path. Helper paths automatically grab and use the id if it's given a instance %>
+    <%= link_to(
+      "Delete",
+      product_path(@product),
+      method: :delete,
+      class: 'btn btn-danger',
+      data: { confirm: 'are you sure?' },
+      )
+    %>
+    <%= link_to "Edit", edit_product_path(@product), class: 'btn btn-info'%>
+    |
+    <% if user_signed_in? && can?(:favourite, @product) %>
+      <% if @favourite.present? %>
+        <%= link_to 'Un Fav', favourite_path(@favourite), method: :delete %>
+      <% else %>
+        <%= link_to 'Fav', product_favourites_path(@product), method: :post %>
+      <% end %>
+    <% end %>
+  </div>
+</div> 
+<p class='text-muted'>Leave a Review :D</p>
+<div class='shadow-sm p-3 mb-5 bg-white rounded'>
+  <%= form_with model: [@product, @review], local: true do |f| %>
+    <div class='form-group'>
+      <%= f.label :rating %>
+      <%= f.select(:rating, options_for_select(1..5), class: 'form-control' )%>
+    </div>
+    <div class='form-group'>
+      <%= f.label :body %>
+      <%= f.text_area(:body, class: 'form-control', placeholder: 'Your thoughts here' )%>
+    </div>
+    <%= f.submit class: 'btn btn-primary' %>
+  <% end %>
+</div>
+
+<h2> Here's what people are saying: </h2>
+
+<% @product.reviews.each do |review| %>
+  <div class='shadow-sm p-3 mb-1 bg-white rounded'>   
+  <%# display_stars is a custom helper method to display stars located in /app/helpers/reviews_helper.rb %>
+  <%# all methods defined in any helper file are available in all views :D. We can place complex logic in these helpers to avoid bloating our model. (business logic inside of controller should be kept to a minimum) %>
+    <h4>
+      <%= display_stars(review) %>
+      <p class='font-weight-lighter d-inline-block'>by <%= review.user.full_name %></p>
+      <% if user_signed_in? && can?(:like, review) %>
+        <% like = current_user.likes.find_by_review_id(review) %>
+        <% if like %>
+          <%= link_to fa_icon('thumbs-down 1x'), like_path(like), method: :delete %>
+        <% else %>
+          <%= link_to fa_icon('thumbs-up 1x'), review_likes_path(review), method: :post %>
+        <% end %>
+      <% end %>
+      (<%= pluralize review.likes.count, 'like' %>)
+
+      <% vote = review.votes.find_by(user: current_user) %>
+      <span class="vote-widget">
+        <% if vote.nil? %>
+          <%= link_to fa_icon('arrow-up'), review_votes_path(review, is_up: true), class: 'text-muted', method: :post %>
+          <%= review.votes.up.count %>
+          <%= link_to fa_icon('arrow-down'), review_votes_path(review, is_up: false), class: 'text-muted', method: :post %>
+          <%= review.votes.down.count %>
+        <% elsif vote.is_up? %>
+          <%= link_to fa_icon('arrow-up'), vote_path(vote), class: 'text-dark', method: :delete %>
+          <%= review.votes.up.count %>
+          <%= link_to fa_icon('arrow-down'), vote_path(vote, is_up: false), class: 'text-muted', method: :patch %>
+          <%= review.votes.down.count %>
+        <% else %>
+          <%= link_to fa_icon('arrow-up'), vote_path(vote, is_up: true), class: 'text-muted', method: :patch %>
+          <%= review.votes.up.count %>
+          <%= link_to fa_icon('arrow-down'), vote_path(vote), class: 'text-dark', method: :delete %>
+          <%= review.votes.down.count %>
+        <% end %>
+      </span>
+      <br>
+      <%= link_to(
+        "Delete",
+        review_path(@product, review),
+        method: :delete,
+        class: 'btn btn-danger float-right',
+        data: { confirm: 'delete this review?' }
+        )
+      %>
+    </h4>
+    <%# adding styles to .review-body inside of 'app/assets/stylesheets/reviews.scss'. Rails will automatically include stylesheets in controllers if the name of the stylesheet is the same name as the controller %>
+    <p class='review-body text-muted'><%= review.body %></p>
+  </div>
+<% end %>

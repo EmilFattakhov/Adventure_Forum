@@ -1,0 +1,22 @@
+<% if @favourites&.any? %>
+    <div class='row'>
+        <div class='col-2'>
+        </div>
+
+        <div class='col-10'>
+            <div class='list-group'>
+            <% @favourites.each do |product| %>
+                <%= link_to product do %>
+                <li class='list-group-item'>
+                    <p><span class='badge badge-light'><%= product.id %></span> <%= product.title %></p>
+                    <small>Last Updated: <%= time_ago_in_words product.updated_at %></small>
+                </li>
+                <% end %>
+            <% end %>
+            </div>
+        </div>
+    </div> 
+<% else %>
+    <h4>You haven't favourited any products!</h4>
+<% end %>
+

@@ -1,0 +1,58 @@
+<% if @product.errors.present? %>
+  <p>
+    <%= @product.errors.full_messages.join(', ')%>
+  </p>
+<% end %>
+
+<%# by default rails forms will submit using XHR/AJAX we'll learn this in the future but for now we want to submit using HTML5 forms so we'll have to set the `local` option to true%>
+<%# https://api.rubyonrails.org/classes/ActionView/Helpers/FormHelper.html#method-i-form_with %>
+<%# form_with uses @product.new_record? to determine if this form should patch or post %>
+<%= form_with model: @product, local:true do |f| %>
+  <div class='form-group'>
+    <%= f.label :title %>
+    <%= f.text_field(:title, class: 'form-control', placeholder: 'Product Name')%>
+  </div>
+  <div class='form-group'>
+    <%= f.label :description %>
+    <%= f.text_area(:description, class: 'form-control', cols: 50, rows: 5, placeholder: 'Provide Description')%>
+  </div>
+  <div class='form-group'>
+    <%= f.label :price %>
+    <%= f.number_field(:price, class: 'form-control', min: 0, placeholder: 'Enter Price', step: :any )%>
+  </div>
+  <div class='form-group'>
+    <%= f.label :sale_price %>
+    <%= f.number_field(:sale_price, class: 'form-control', min: 0, placeholder: 'Enter Sale Price', step: :any )%>
+  </div>
+  <div class='form-group'>
+    <%= f.label :tag_names %>
+    <%= f.text_field :tag_names %>
+  </div>
+  <% if @product.new_record? %>
+    <%= f.submit("Create", class: 'btn btn-primary') %>
+  <% else %>
+    <%= f.submit("Update", class: 'btn btn-primary') %>
+  <% end %>
+<% end %>
+<script>
+  $(function(){
+    $('#product_tag_names').selectize({
+      delimeter: ',',
+      persist: false,
+      labelField: 'name',
+      valueField: 'name',
+      searchField: 'name',
+      options: <%= Tag.select(:name).to_json(except: [:id]).html_safe %>,
+      // The above line selects only names from tags table and converts them to
+      // a json array of objects
+      // without including ids and makes sure its a safe_html string
+      // options: [{"name": "first tag"}, {"name": "second tag"}, {"name": "third tag"},
+      //           {"name": "fourth tag"}, {"name": "fifth tag"}, ...]
+      create: function(input) {
+        return {
+            name: input 
+        }
+      }
+    });
+  });
+</script> 
